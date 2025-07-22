@@ -1,0 +1,25 @@
+// Dijkstra Algorithm - priority queue
+// doesn't work for negative weight and negative cycle
+class Solution{
+public:
+    vector<int> dijkstra(int n, vector<vector<int>> &adj, int s){
+        priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq;
+        vector<int> dist(n, 1e9);
+        dist[s]=0;
+        pq.push({0, s});
+        while(!pq.empty()){
+            int d=pq.top().first;
+            int node=pq.top().second;
+            pq.pop();
+            for (auto &neighbor : adj[node]) {
+                int nextNode = neighbor.first;
+                int weight = neighbor.second;
+                if (d + weight < dist[nextNode]) {
+                    dist[nextNode] = d + weight;
+                    pq.push({dist[nextNode], nextNode});
+                }
+            }
+        }
+        return dist;
+    }
+};
