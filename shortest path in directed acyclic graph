@@ -1,0 +1,51 @@
+#include <iostream>
+using namespace std;
+
+// shortest path in directed acyclic graph
+// TC : O(N+M)
+
+class Solution{
+        void topoSort(int node, vector<vector<pair<int, int>>> &adj, vector<int> &vis, stack<int> &s){
+            vis[node]=1;
+            for(auto it:adj[node]){
+                int v=it.first;
+                if (!vis[v]) topoSort(v, adj, vis, s);
+            }
+            s.push(node);
+        }
+    public:
+        vector<int> shortestPath(vector<vector<int>>& edges, int n, int m, int src){
+            vector<pair<int, int>> adj(n);
+            for(int i=0;i<m;i++){
+                int u=edges[i][0];
+                int v=edges[i][1];
+                int w=edges[i][2];
+                adj[u].push_back({v, w});
+            }
+            
+            // TC : O(N+M)
+            vector<int> vis(n, 0);
+            stack<int> s;
+            for(int i=0;i<n;i++){
+                if (!vis[i]) topoSort(i, adj, vis, s);
+            }
+            
+            vector<int> dist(n, INT_MAX);
+            dist[src]=0;
+            // TC : O(N+M)
+            while(!s.empty()){
+                int node=s.top();
+                s.pop();
+                if (dist[node]!=INT_MAX){
+                    for(auto it:adj[node]){
+                        int v=it.first;
+                        int w=it.second;
+                        if (dist[node]+w<dist[v]){
+                            dist[v]=dist[node]+w;
+                        }
+                    }
+                }
+            }
+            return dist;
+        }
+};
