@@ -1,0 +1,37 @@
+class Solution {
+public:
+    int countPaths(int n, vector<vector<int>>& roads) {
+        // TC : O(ElogV)->O((n+m)logn)
+        // SC : O(n + m)
+        const int MOD=1e9+7;
+        vector<vector<pair<int, int>>> adj(n);
+        for(auto &road:roads){
+            int u=road[0], v=road[1], time=road[2];
+            adj[u].emplace_back(v, time);
+            adj[v].emplace_back(u, time);
+        }
+        priority_queue<pair<long long, int>, vector<pair<long long, int>>, greater<pair<long long, int>>> pq;
+        vector<long long> minTime(n, LLONG_MAX);
+        vector<int> ways(n, 0);
+        pq.emplace(0, 0); //time, node
+        minTime[0]=0;
+        ways[0]=1;
+        while(!pq.empty()){
+            auto [time, node]=pq.top();
+            pq.pop();
+            if (time>minTime[node]) continue;
+            for(auto &[neighbour, travelTime]:adj[node]){
+                long long newTime=time+travelTime;
+                if (newTime<minTime[neighbour]){
+                    minTime[neighbour]=newTime;
+                    ways[neighbour]=ways[node];
+                    pq.emplace(newTime, neighbour);
+                }
+                else if(newTime==minTime[neighbour]){
+                    ways[neighbour]=(ways[neighbour]+ways[node])%MOD;
+                }
+            }
+        }
+        return ways[n-1];
+    }
+};
