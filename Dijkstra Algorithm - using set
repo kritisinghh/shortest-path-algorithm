@@ -1,0 +1,27 @@
+// Dijkstra Algorithm - using set
+class Solution{
+public:
+    vector<int> dijkstra(int n, vector<vector<int>> &adj, int s){
+        set<pair<int, int>> st;
+        vector<int> dist(n, 1e9);
+        dist[s]=0;
+        st.insert({0, s});
+        dist[s]=0;
+        while(!st.empty()){
+            auto it=*(st.begin());
+            int d=it.first;
+            int node=it.second;
+            st.erase(it);
+            for (auto &neighbor : adj[node]) {
+                int nextNode = neighbor.first;
+                int weight = neighbor.second;
+                if (d + weight < dist[nextNode]) {
+                    if (dist[nextNode]!=1e9) st.erase({dist[nextNode], nextNode});
+                    dist[nextNode]=d+weight;
+                    st.insert({dist[nextNode], nextNode});
+                }
+            }
+        }
+        return dist;
+    }
+};
